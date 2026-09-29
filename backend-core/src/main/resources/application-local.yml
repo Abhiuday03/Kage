@@ -1,0 +1,50 @@
+# =============================================================
+# Local Development Profile (H2 in-memory, no Docker needed)
+# =============================================================
+# Activate with:
+#   Windows PowerShell:  mvn spring-boot:run "-Dspring.profiles.active=local"
+#   Windows CMD:         mvn spring-boot:run -Dspring.profiles.active=local
+#   macOS / Linux:       mvn spring-boot:run -Dspring.profiles.active=local
+# =============================================================
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:contentos_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  flyway:
+    enabled: false
+  # Disable Redis auto-configuration for local H2 testing
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+
+app:
+  jwt:
+    secret: "localdevonlysecretkey404e635266556a586e3272357538782f413f4428472b4b6250"
+    expiration-ms: 604800000
+  storage:
+    endpoint: http://localhost:9000
+    region: us-east-1
+    bucket-name: contentos-media
+    access-key: minioadmin
+    secret-key: minioadmin
+    path-style-access: true
+  ai-engine:
+    base-url: http://localhost:8000
+    webhook-secret: local-dev-secret
+  cors:
+    allowed-origins: http://localhost:5173

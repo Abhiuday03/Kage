@@ -1,0 +1,59 @@
+# =============================================================
+# ContentOS Root .gitignore
+# =============================================================
+
+# Security — NEVER commit secrets
+.env
+.env.local
+.env.production
+*.env
+
+# macOS
+.DS_Store
+
+# IntelliJ / VS Code / editors
+.idea/
+*.iml
+.vscode/
+*.swp
+
+# Java build artifacts
+target/
+*.jar
+*.war
+*.class
+
+# Maven wrapper (optional to ignore)
+# .mvn/
+
+# Node / frontend build
+node_modules/
+dist/
+.cache/
+frontend/dist/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Docker volumes (if you accidentally create local data dirs)
+postgres_data/
+redis_data/
+minio_data/
+
+# Logs
+*.log
+logs/
+
+# OS
+Thumbs.db
