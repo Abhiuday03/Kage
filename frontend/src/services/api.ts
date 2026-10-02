@@ -159,3 +159,109 @@ export const nicheApi = {
   delete: (workspaceId: string, nicheId: string) =>
     apiClient.delete<ApiResponse<void>>(`/workspaces/${workspaceId}/niches/${nicheId}`),
 }
+
+// Content Ideas API
+export type IdeaStatus =
+  | 'DISCOVERED'
+  | 'SCORED'
+  | 'SELECTED'
+  | 'BRIEFED'
+  | 'IN_PROGRESS'
+  | 'COMPLETED'
+  | 'REJECTED'
+  | 'ARCHIVED'
+
+export interface ContentIdea {
+  id: string
+  workspaceId: string
+  nicheId: string | null
+  title: string
+  description: string
+  sourceUrl: string | null
+  trendScore: number
+  relevanceScore: number
+  engagementScore: number
+  totalScore: number
+  status: IdeaStatus
+  discoveredAt: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface IdeasPageResponse {
+  content: ContentIdea[]
+  totalElements: number
+  totalPages: number
+  currentPage: number
+  pageSize: number
+}
+
+export interface TriggerDiscoveryRequest {
+  nicheId: string
+  count?: number
+}
+
+export interface TriggerDiscoveryResponse {
+  status: string
+  workspaceId: string
+}
+
+export interface ScoreIdeaResponse {
+  ideaId: string
+  trendScore: number
+  relevanceScore: number
+  engagementScore: number
+  totalScore: number
+  scoringReasoning: string
+}
+
+export const ideaApi = {
+  // Get all ideas for current workspace (paginated)
+  getAll: (page: number = 0, size: number = 20) =>
+    apiClient.get<ApiResponse<IdeasPageResponse>>('/ideas', {
+      params: { page, size },
+    }),
+
+  // Get ideas filtered by status
+  getByStatus: (status: IdeaStatus, page: number = 0, size: number = 20) =>
+    apiClient.get<ApiResponse<IdeasPageResponse>>(`/ideas/status/${status}`, {
+      params: { page, size },
+    }),
+
+  // Get a single idea by ID
+  getById: (ideaId: string) =>
+    apiClient.get<ApiResponse<ContentIdea>>(`/ideas/${ideaId}`),
+
+  // Trigger AI-powered idea generation (async)
+  // Returns 202 Accepted immediately, results arrive via webhook
+  triggerDiscovery: (nicheId: string, count?: number) =>
+    apiClient.post<ApiResponse<TriggerDiscoveryResponse>>('/discovery/trigger', null, {
+      params: { nicheId, count },
+    }),
+
+  // Score a single idea using AI Engine
+  scoreIdea: (ideaId: string, nicheId: string) =>
+    apiClient.post<ApiResponse<ScoreIdeaResponse>>(`/ideas/${ideaId}/score`, null, {
+      params: { nicheId },
+    }),
+
+  // Update idea status (move between Kanban columns)
+  updateStatus: (ideaId: string, status: IdeaStatus) =>
+    apiClient.patch<ApiResponse<ContentIdea>>(`/ideas/${ideaId}/status`, null, {
+      params: { status },
+    }),
+
+  // Delete an idea
+  delete: (ideaId: string) =>
+    apiClient.delete<ApiResponse<void>>(`/ideas/${ideaId}`),
+}
+
+// Workspace header injection
+// Add X-Workspace-ID header to all requests if workspace is set
+apiClient.interceptors.request.use((config) => {
+  const workspaceId = localStorage.getItem('current_workspace_id')
+  if (workspaceId) {
+    config.headers['X-Workspace-ID'] = workspaceId
+  }
+  return config
+})

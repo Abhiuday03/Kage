@@ -13,16 +13,20 @@
     "lint:fix": "eslint . --ext ts,tsx --fix"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
+    "@hookform/resolvers": "^3.7.0",
     "@tanstack/react-query": "^5.51.1",
     "@tanstack/react-query-devtools": "^5.51.1",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.24.1",
     "axios": "^1.7.2",
     "clsx": "^2.1.1",
     "lucide-react": "^0.408.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-hook-form": "^7.52.1",
-    "@hookform/resolvers": "^3.7.0",
+    "react-hot-toast": "^2.6.1",
+    "react-router-dom": "^6.24.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {

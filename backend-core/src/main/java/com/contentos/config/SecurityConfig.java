@@ -69,6 +69,9 @@ public class SecurityConfig {
                 .requestMatchers("/actuator/health").permitAll()
                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
+                // Internal webhooks (no JWT required, validated via secret header)
+                .requestMatchers("/api/internal/webhooks/**").permitAll()
+
                 // Allow preflight CORS requests
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
