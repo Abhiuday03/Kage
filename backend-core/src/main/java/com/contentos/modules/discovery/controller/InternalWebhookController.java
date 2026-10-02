@@ -89,9 +89,7 @@ public class InternalWebhookController {
             log.info("Successfully processed {} ideas for workspace {}",
                 payload.getIdeas().size(), workspaceId);
 
-            return ResponseEntity.ok(
-                ApiResponse.success(null, "Ideas received and saved successfully")
-            );
+            return ResponseEntity.ok(ApiResponse.success(null));
 
         } catch (IllegalArgumentException e) {
             log.error("Invalid workspace ID format: {}", payload.getWorkspaceId());

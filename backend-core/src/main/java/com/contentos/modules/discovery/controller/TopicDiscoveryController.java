@@ -1,7 +1,6 @@
 package com.contentos.modules.discovery.controller;
 
 import com.contentos.common.response.ApiResponse;
-import com.contentos.modules.discovery.dto.DiscoveryRequestDTO;
 import com.contentos.modules.discovery.dto.DiscoveryResponseDTO;
 import com.contentos.modules.discovery.service.DiscoveryService;
 import com.contentos.security.TenantContext;
@@ -34,9 +33,11 @@ import java.util.UUID;
 public class TopicDiscoveryController {
 
     private final DiscoveryService discoveryService;
+    private final TenantContext tenantContext;
 
-    public TopicDiscoveryController(DiscoveryService discoveryService) {
+    public TopicDiscoveryController(DiscoveryService discoveryService, TenantContext tenantContext) {
         this.discoveryService = discoveryService;
+        this.tenantContext = tenantContext;
     }
 
     /**
@@ -55,13 +56,13 @@ public class TopicDiscoveryController {
         @Parameter(description = "Niche ID") @RequestParam UUID nicheId,
         @Parameter(description = "Number of ideas to generate") @RequestParam(required = false) Integer count
     ) {
-        UUID workspaceId = TenantContext.getCurrentWorkspaceId();
+        UUID workspaceId = tenantContext.getCurrentWorkspaceId();
         log.info("Discovery triggered for niche: {} in workspace: {}", nicheId, workspaceId);
 
         DiscoveryResponseDTO response = discoveryService.triggerDiscovery(workspaceId, nicheId, count);
 
         return ResponseEntity
             .status(HttpStatus.ACCEPTED)
-            .body(ApiResponse.success(response, "Discovery process initiated. Results will be sent via webhook."));
+            .body(ApiResponse.success(response));
     }
 }

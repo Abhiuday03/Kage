@@ -38,9 +38,11 @@ import java.util.UUID;
 public class DiscoveryController {
 
     private final ContentIdeaService contentIdeaService;
+    private final TenantContext tenantContext;
 
-    public DiscoveryController(ContentIdeaService contentIdeaService) {
+    public DiscoveryController(ContentIdeaService contentIdeaService, TenantContext tenantContext) {
         this.contentIdeaService = contentIdeaService;
+        this.tenantContext = tenantContext;
     }
 
     /**
@@ -58,12 +60,12 @@ public class DiscoveryController {
         @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
         @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size
     ) {
-        UUID workspaceId = TenantContext.getCurrentWorkspaceId();
+        UUID workspaceId = tenantContext.getCurrentWorkspaceId();
         log.info("Fetching ideas for workspace: {}, page: {}, size: {}", workspaceId, page, size);
 
         Page<ContentIdeaDTO> ideas = contentIdeaService.getIdeas(workspaceId, page, size);
 
-        return ResponseEntity.ok(ApiResponse.success(ideas, "Ideas retrieved successfully"));
+        return ResponseEntity.ok(ApiResponse.success(ideas));
     }
 
     /**
@@ -82,12 +84,12 @@ public class DiscoveryController {
         @Parameter(description = "Page number (0-indexed)") @RequestParam(defaultValue = "0") int page,
         @Parameter(description = "Page size") @RequestParam(defaultValue = "20") int size
     ) {
-        UUID workspaceId = TenantContext.getCurrentWorkspaceId();
+        UUID workspaceId = tenantContext.getCurrentWorkspaceId();
         log.info("Fetching ideas with status: {} for workspace: {}", status, workspaceId);
 
         Page<ContentIdeaDTO> ideas = contentIdeaService.getIdeasByStatus(workspaceId, status, page, size);
 
-        return ResponseEntity.ok(ApiResponse.success(ideas, "Ideas retrieved successfully"));
+        return ResponseEntity.ok(ApiResponse.success(ideas));
     }
 
     /**
@@ -100,12 +102,12 @@ public class DiscoveryController {
     public ResponseEntity<ApiResponse<ContentIdeaDTO>> getIdea(
         @Parameter(description = "Idea ID") @PathVariable UUID ideaId
     ) {
-        UUID workspaceId = TenantContext.getCurrentWorkspaceId();
+        UUID workspaceId = tenantContext.getCurrentWorkspaceId();
         log.info("Fetching idea: {} for workspace: {}", ideaId, workspaceId);
 
         ContentIdeaDTO idea = contentIdeaService.getIdea(workspaceId, ideaId);
 
-        return ResponseEntity.ok(ApiResponse.success(idea, "Idea retrieved successfully"));
+        return ResponseEntity.ok(ApiResponse.success(idea));
     }
 
     /**
@@ -123,12 +125,12 @@ public class DiscoveryController {
         @Parameter(description = "Idea ID") @PathVariable UUID ideaId,
         @Parameter(description = "Niche ID for context") @RequestParam UUID nicheId
     ) {
-        UUID workspaceId = TenantContext.getCurrentWorkspaceId();
+        UUID workspaceId = tenantContext.getCurrentWorkspaceId();
         log.info("Scoring idea: {} with niche: {} for workspace: {}", ideaId, nicheId, workspaceId);
 
         ContentIdeaDTO scoredIdea = contentIdeaService.scoreIdea(workspaceId, ideaId, nicheId);
 
-        return ResponseEntity.ok(ApiResponse.success(scoredIdea, "Idea scored successfully"));
+        return ResponseEntity.ok(ApiResponse.success(scoredIdea));
     }
 
     /**
@@ -142,12 +144,12 @@ public class DiscoveryController {
         @Parameter(description = "Idea ID") @PathVariable UUID ideaId,
         @Parameter(description = "New status") @RequestParam ContentIdea.IdeaStatus status
     ) {
-        UUID workspaceId = TenantContext.getCurrentWorkspaceId();
+        UUID workspaceId = tenantContext.getCurrentWorkspaceId();
         log.info("Updating idea: {} status to: {} for workspace: {}", ideaId, status, workspaceId);
 
         ContentIdeaDTO updatedIdea = contentIdeaService.updateIdeaStatus(workspaceId, ideaId, status);
 
-        return ResponseEntity.ok(ApiResponse.success(updatedIdea, "Idea status updated successfully"));
+        return ResponseEntity.ok(ApiResponse.success(updatedIdea));
     }
 
     /**
@@ -160,11 +162,11 @@ public class DiscoveryController {
     public ResponseEntity<ApiResponse<Void>> deleteIdea(
         @Parameter(description = "Idea ID") @PathVariable UUID ideaId
     ) {
-        UUID workspaceId = TenantContext.getCurrentWorkspaceId();
+        UUID workspaceId = tenantContext.getCurrentWorkspaceId();
         log.info("Deleting idea: {} for workspace: {}", ideaId, workspaceId);
 
         contentIdeaService.deleteIdea(workspaceId, ideaId);
 
-        return ResponseEntity.ok(ApiResponse.success(null, "Idea deleted successfully"));
+        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
